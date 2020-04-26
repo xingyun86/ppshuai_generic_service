@@ -1,0 +1,177 @@
+﻿<!doctype html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+          content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>VVVVVVD3绘制折线</title>
+    <script src='d3/d3.min.js'></script>
+    <script>
+        VVVVVV_SVG_SIZE = { width: 800, height: 600 };
+        VVVVVV_SVG_MARGIN = { left: 60, top: 60, right: 60, bottom: 60 };
+        VVVVVV_data = {
+            'haxis': XXXXXX,
+            //'long5': { 'color': '#800000', 'list': LLL5LLL },
+            //'short5': { 'color': '#008000', 'list': SSS5SSS },
+            //'long10': { 'color': '#000080', 'list': LLL10LLL },
+            //'short10': { 'color': '#800080', 'list': SSS10SSS },
+            //'long20': { 'color': '#808000', 'list': LLL20LLL },
+            //'short20': { 'color': '#008080', 'list': SSS20SSS },
+            'long5short': { 'color': '#FF0080', 'list': LLL5SSS },
+            'long10short': { 'color': '#00FF80', 'list': LLL10SSS },
+            'long20short': { 'color': '#0080FF', 'list': LLL20SSS }
+        };
+        
+        function domain_min_max(data, except) {
+            let min = null;
+            let max = null;
+            for (let key in data) {
+                if (key != except) {
+                    if (min == null) {
+                        min = (d3.min(data[key]['list'], function (d) { return parseFloat(d); }));
+                    }
+                    else {
+                        min = d3.min([min, (d3.min(data[key]['list'], function (d) { return parseFloat(d); }))]);
+                    }
+                    if (max == null) {
+                        max = (d3.max(data[key]['list'], function (d) { return parseFloat(d); }));
+                    }
+                    else {
+                        max = d3.max([max, (d3.max(data[key]['list'], function (d) { return parseFloat(d); }))]);
+                    }
+                }
+            }
+            return [min, max];
+        }
+        function poly_line() {
+            let svg_g = d3.select('#VVVVVV-container-line').append('svg').attr('width', VVVVVV_SVG_SIZE.width).attr('height', VVVVVV_SVG_SIZE.height).append('g');
+            //let xranges = d3.range(VVVVVV_data.haxis.length);
+            //var parseTime = d3.timeParse('%Y%m%d');
+            //var formatTime = d3.timeParse('%Y%m%d');
+            let xScale = d3.scaleBand().paddingInner(1).paddingOuter(1)//.step((VVVVVV_SVG_SIZE.width - VVVVVV_SVG_MARGIN.left - VVVVVV_SVG_MARGIN.right) / data.haxis.length)
+                //.domain([parseTime(VVVVVV_data.haxis[0]),parseTime(VVVVVV_data.haxis[VVVVVV_data.haxis.length - 1])])
+                //.domain(d3.extent(VVVVVV_data.haxis, function(d) {
+                //    let date = d.substr(0, 4) + '-' + d.substr(4, 2) + '-' + d.substr(6, 2);// + ' 00:00:00'
+                //console.log(Date.parse(new Date(date)).toString());
+                //    return new Date(date);return Date.parse(new Date(date))/1000; return parseInt(d);}))
+                //.domain(d3.extent(data.haxis, function(d) {return d;}))
+                .domain(VVVVVV_data.haxis)
+                .rangeRound([VVVVVV_SVG_MARGIN.left, VVVVVV_SVG_SIZE.width - VVVVVV_SVG_MARGIN.right]);
+            let xAxis = d3.axisBottom(xScale);
+            let yScale = d3.scaleLinear()
+                .domain(domain_min_max(VVVVVV_data, 'haxis'))
+                .rangeRound([VVVVVV_SVG_SIZE.height - VVVVVV_SVG_MARGIN.top, VVVVVV_SVG_MARGIN.bottom]);
+            let yAxis = d3.axisLeft(yScale);
+
+            svg_g
+                .append('g')
+                .attr('transform', 'translate(0,' + (VVVVVV_SVG_SIZE.height - VVVVVV_SVG_MARGIN.bottom) + ')')
+                .call(xAxis)
+                .selectAll('text')
+                .attr('transform', 'rotate(-45)')
+                //.attr('transform', 'translate(-' + ((VVVVVV_SVG_SIZE.width - VVVVVV_SVG_MARGIN.left - VVVVVV_SVG_MARGIN.right) / VVVVVV_data.haxis.length / 2) + ',0)rotate(-45)')
+                .style('text-anchor', 'end');
+            svg_g.append('g')
+                .attr('transform', 'translate(' + VVVVVV_SVG_MARGIN.left + ',0)')
+                .call(yAxis)
+                .selectAll('text');
+
+            svg_g.append('text')
+                .attr('transform', 'translate(' + VVVVVV_SVG_MARGIN.left + ',' + VVVVVV_SVG_MARGIN.bottom + ')')
+                //.attr('x', 3)
+                .attr('text-anchor', 'start')
+                //.attr('font-weight', 'bold')
+                .text('VVVVVV手数/天');
+
+            let line_generator = d3.line()
+                .x(function (d, i) {
+                    console.log('x->' + VVVVVV_data.haxis[i] + ',type=' + typeof (VVVVVV_data.haxis[i]) + ',xScale(data.haxis[i])=' + xScale(VVVVVV_data.haxis[i]));
+                    return xScale(VVVVVV_data.haxis[i]);
+                })
+                .y(function (d, i) {
+                    console.log('y->' + d + ',yScale(d)=' + yScale(d));
+                    return yScale(d);
+                })
+                //折线变得圆滑，如果不需要可以去掉
+                ;//.curve(d3.curveMonotoneX);
+            let dots = svg_g.append('g')
+                .attr('display', 'none');
+            dots.append('circle')
+                .attr('r', 4)
+                .attr("cx", function (d, i) { return xScale(VVVVVV_data.haxis[i - 1]); })
+                .attr("cy", function (d, i) { return yScale(d); })
+                .style("fill", "#69A3A2");
+            dots.append('text')
+                .style('font', '10px sans-serif')
+                .attr('text-anchor', 'middle')
+                .attr('y', -16);
+
+            for (let key in VVVVVV_data) {
+                if (key != 'haxis') {
+                    svg_g.append('path')
+                        .attr('d', line_generator(VVVVVV_data[key]['list']))
+                        .attr('fill', 'none')
+                        .attr('stroke', VVVVVV_data[key]['color'])
+                        .attr('stroke-linejoin', 'round')
+                        .attr('stroke-linecap', 'round')
+                        .attr('stroke-width', '2')
+                        .attr('cursor', 'pointer')
+                        .on('touchmove', function (d, i) {
+                            d3.select(this).transition().duration(100).attr('stroke', '#CB7730');
+                        })
+                        .on('touchstart', function (d, i) {
+                            d3.select(this).transition().duration(100).attr('stroke', '#CB7730');
+                        })
+                        .on('touchend', function (d, i) {
+                            d3.select(this).transition().duration(100).attr('stroke', VVVVVV_data[key]['color']);
+                        })
+                        .on('mousemove', function (d, i) {
+                            d3.select(this).transition().duration(100).attr('stroke', '#CB7730');
+                            d3.event.preventDefault();
+                            dots.attr('display', null);
+                            if (d3.event.layerX <= VVVVVV_SVG_SIZE.width && d3.event.layerX >= 0) {
+                                console.log('(' + d3.event.layerX + ',' + d3.event.layerY + ')');
+                                console.log('step=' + xScale.step() + ',bandWidth=' + xScale.bandwidth() + ',padding=' + xScale.padding() + ',paddingIn=' + xScale.paddingInner() + ',paddingOut=' + xScale.paddingOuter());
+                                let offset = (d3.event.layerX - xScale.padding() - VVVVVV_SVG_MARGIN.left - ((VVVVVV_SVG_SIZE.width - VVVVVV_SVG_MARGIN.left - VVVVVV_SVG_MARGIN.right - xScale.step() * (VVVVVV_data.haxis.length - 1)) / 2)) / xScale.step();
+                                let index = parseInt(offset.toString());
+                                if (index >= 0 && index < VVVVVV_data.haxis.length) {
+                                    console.log('(' + d3.event.layerX + ',' + d3.event.layerY + '),' +
+                                        index + ',(' + xScale(VVVVVV_data.haxis[index]) + ',' + yScale(VVVVVV_data[key]['list'][index]) + '),(' + VVVVVV_data.haxis[index] + ',' + VVVVVV_data[key]['list'][index] + ')');
+                                    dots.attr('transform', 'translate(' + xScale(VVVVVV_data.haxis[index]) + ',' + yScale(VVVVVV_data[key]['list'][index]) + ')');
+                                    dots.select('text').text('[' + key + ']' + '|' + VVVVVV_data.haxis[index] + '|' + VVVVVV_data[key]['list'][index]);
+                                }
+                            }
+                        })
+                        .on('mouseover', function (d, i) {
+                            d3.select(this).transition().duration(100).attr('stroke', '#CB7730');
+                            dots.attr('display', null);
+                        })
+                        .on('mouseout', function (d, i) {
+                            d3.select(this).transition().duration(100).attr('stroke', VVVVVV_data[key]['color']);
+                            dots.attr('display', 'none');
+                        })
+                        .on('click', function () {
+                            alert('曲线事件已触发！');
+                        });
+                }
+            }
+        }
+        //绘制折线图
+        window.onload = function () {
+            // 绘制多条折线图
+            poly_line();
+        }
+        // 绘制多条折线图
+        if (document.readyState == 'complete') {
+            poly_line();
+        }
+    </script>
+</head>
+
+<body>
+    <div id='VVVVVV-container-line' width='800' height='600'></div>
+</body>
+
+</html>

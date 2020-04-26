@@ -1,0 +1,72 @@
+﻿<!doctype html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport'
+        content='width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <title>GitHub帮助</title>
+    <script src='js/jquery-3.4.1.min.js'></script>
+    <script src='d3/d3.min.js'></script>
+    <script>
+        $(document).ready(function () {
+            host = 'xjp.ppsbbs.tech:8899';
+            //host = '10.0.3.239:3000';
+            /*$.ajax({
+                type: "GET",
+                url: 'http://' + host + '/chart-dce-list?p=dce&d=' + date_to_string(new Date, '') + '&c=30',
+                dataType: 'json',
+                data: {},
+                cache: false,
+                ifModified: true,
+                async: false,
+                success: function (response) {
+                    //操作
+                    codes = eval(response);
+                    for (var i in codes) {
+                        $("#select-dce").append('<option value="' + codes[i] + '">' + codes[i] + '</option>');//添加option;
+                    }
+                }
+            });*/
+            document.getElementById("panel").onclick = function () {
+                alert("元素已经加载完毕 !");
+            }
+
+            document.getElementById("github_addr_size_btn").onclick = function () {
+                //alert("元素已经加载完毕 !");
+                $("#github_addr_panel").html('');
+                $.ajax({
+                    type: "GET",
+                    url: 'http://' + host + '/github/size?org=' + $('#github_addr_org_text').val() + '&prj=' + $('#github_addr_prj_text').val() + '&signature=https',
+                    dataType: 'html',
+                    data: {},
+                    cache: false,
+                    ifModified: true,
+                    async: false,
+                    success: function (response) {
+                        //操作
+                        //$("#github_addr_panel").html(response);
+                        let resp = eval('(' + response + ')');
+                        let url = resp["url"];
+                        let size = resp["org_prj_size"];
+                        $("#github_addr_panel").html('<a href="' + url + '">下载文件</a>' + ',解压后项目大小为：' + size + 'KB');
+                    }
+                });
+            }
+        })
+    </script>
+</head>
+
+<body>
+    <div id="panel">GitHub下载快速通道</div>
+    <span>组织名称:(如https://github.com/boostorg/beast.git, 即为boostorg)</span><br>
+    <input id="github_addr_org_text" type="text" value="boostorg" placeholder="请输入github组织名称" /><br>
+    <span>项目名称:(如https://github.com/boostorg/beast.git, 即为beast)</span><br>
+    <input id="github_addr_prj_text" type="text" value="beast" placeholder="请输入github项目名称" /><br>
+    <button id="github_addr_size_btn">获取项目下载连接</button><br>
+    <hr>
+    <div id='github_addr_panel'></div>
+</body>
+
+</html>
