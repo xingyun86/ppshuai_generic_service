@@ -1,4 +1,7 @@
 Usage:
-1.git clone https://github.com/xingyun86/ppshuai_generic_service_vendors.git
-2.Uncompress generic_service_libraries-(XINGYUN86LLLYYY).7z to current directory.
-3.Windows install cmake3 and Linux install cmake3
+1.Install gcc-9 environment
+centos: http://www.ppsbbs.tech/thread-487.htm
+ubuntu: http://www.ppsbbs.tech/thread-519.htm
+2.git clone https://github.com/xingyun86/ppshuai_generic_service_vendors.git
+3.Uncompress generic_service_libraries-(XINGYUN86LLLYYY).7z to current directory.
+4.Windows install cmake3 and Linux install cmake3

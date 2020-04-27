@@ -7,7 +7,10 @@ project ("generic_service")
 
 set( CMAKE_VERBOSE_MAKEFILE on )
 
-set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+if(MSVC)
+else()
+set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
+endif(MSVC)
 
 # Include sub-projects.
 add_subdirectory ("zlib-1.2.11")

@@ -112,10 +112,8 @@ public:
 	CServiceModules() :
 		schema("https://"),
 		host("api.huobi.pro"),
-		accesskey("d19df104-176f23c5-1qdmpe4rty-3ef9c"),
-		secretkey("212b10f1-f54a4e03-7d0ea328-feb46"),
-		//accesskey("xxxxxx-xxxxxx-xxxxxx-xxxxxx"),
-		//secretkey("xxxxxx-xxxxxx-xxxxxx-xxxxxx"),
+		accesskey("xxxxxx-xxxxxx-xxxxxx-xxxxxx"),
+		secretkey("xxxxxx-xxxxxx-xxxxxx-xxxxxx"),
 		state_url("https://status.huobigroup.com/api/v2/summary.json") {}
 	virtual ~CServiceModules(){}
 private:
