@@ -77,7 +77,7 @@ if (MSVC)
 	#set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} ${CMAKE_CXX_FLAGS} -DUWS_NO_ZLIB /std:c++17 /std:c++latest -D_HAS_CXX17=1 -D_HAS_CXX20=1")
 else()
 	set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} ${CMAKE_CXX_FLAGS} -std=c++17")
-    list(APPEND EXTERN_LIBRARIES pthread stdc++fs)
+    list(APPEND EXTERN_LIBRARIES pthread stdc++)
 endif(MSVC)
 
 if (MSVC)
